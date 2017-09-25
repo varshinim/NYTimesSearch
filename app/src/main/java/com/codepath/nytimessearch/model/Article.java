@@ -3,13 +3,13 @@ package com.codepath.nytimessearch.model;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
+import org.parceler.ParcelConstructor;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
-import static android.R.attr.x;
-
-public class Article implements Serializable{
+@Parcel
+public class Article {
     String webUrl;
 
     public String getWebUrl() {
@@ -24,12 +24,18 @@ public class Article implements Serializable{
         return thumbNail;
     }
 
+    public String getSnippet() { return snippet; }
+
     String headline;
     String thumbNail;
+    String snippet;
+
+    public Article() {}
 
     public Article(JSONObject jsonObject){
         try{
             this.webUrl = jsonObject.getString("web_url");
+            this.snippet = jsonObject.getString("snippet");
             this.headline = jsonObject.getJSONObject("headline").getString("main");
 
             JSONArray multimedia = jsonObject.getJSONArray("multimedia");

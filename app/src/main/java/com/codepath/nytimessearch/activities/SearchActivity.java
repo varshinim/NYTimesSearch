@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
@@ -12,8 +14,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.Toast;
 
 import com.codepath.nytimessearch.FilterDialog;
@@ -28,6 +28,7 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,10 +39,12 @@ import static android.R.attr.offset;
 
 public class SearchActivity extends AppCompatActivity implements FilterDialog.FilterDialogListener {
 
-    GridView gvResults;
+    private InfiniteScrollListener scrollListener;
 
     ArrayList<Article> articles;
     ArticleArrayAdapter adapter;
+    RecyclerView listArticles;
+    StaggeredGridLayoutManager gridLayoutManager;
 
     String query;
     Date mDate;
@@ -67,10 +70,10 @@ public class SearchActivity extends AppCompatActivity implements FilterDialog.Fi
         setSupportActionBar(toolbar);
         setupViews();
 
-        // Attach the listener to the AdapterView onCreate
-        gvResults.setOnScrollListener(new InfiniteScrollListener() {
+        // Retain an instance so that you can call `resetState()` for fresh searches
+        scrollListener = new InfiniteScrollListener(gridLayoutManager) {
             @Override
-            public boolean onLoadMore(int page, int totalItemsCount) {
+            public boolean onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
                 Log.d("onLoadMore: ", "page = "+page);
                 Log.d("onLoadMore: ", "totalItemsCount = "+totalItemsCount);
@@ -79,29 +82,37 @@ public class SearchActivity extends AppCompatActivity implements FilterDialog.Fi
                 }
                 return true;
             }
-        });
+        };
+        // Adds the scroll listener to RecyclerView
+        listArticles.addOnScrollListener(scrollListener);
     }
 
     public void setupViews(){
-        gvResults = (GridView) findViewById(R.id.gvResults);
         articles = new ArrayList<>();
-        adapter = new ArticleArrayAdapter(this, articles);
-        gvResults.setAdapter(adapter);  //set adpter to gridview
 
+        listArticles = (RecyclerView) findViewById(R.id.rvArticles);
         //hook up listener for grid click
-        gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+        ArticleArrayAdapter.RecyclerViewClickListener listener = new ArticleArrayAdapter.RecyclerViewClickListener(){
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+            public void recyclerViewListClicked(View v, int position) {
                 // create an intent to display the article
                 Intent i = new Intent(getApplicationContext(), ArticleActivity.class);
                 // get the article to diasplay
                 Article article = articles.get(position);
                 // pass that article into intent
-                i.putExtra("article", article);
+                i.putExtra("article", Parcels.wrap(article));
                 // launch the activity
                 startActivity(i);
             }
-        });
+        };
+
+        adapter = new ArticleArrayAdapter(this, articles, listener);
+        // Attach the adapter to the recyclerview to populate items
+        listArticles.setAdapter(adapter);
+        // Set StaggeredGridlayout manager to position the items
+        gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        // Attach the layout manager to the recycler view
+        listArticles.setLayoutManager(gridLayoutManager);
     }
 
     @Override
@@ -132,10 +143,19 @@ public class SearchActivity extends AppCompatActivity implements FilterDialog.Fi
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         if (id == R.id.action_settings) {
             FragmentManager manager = getSupportFragmentManager();
             FilterDialog dialog = new FilterDialog();
+
+            if (mDate != null) {
+                Bundle filterData = new Bundle();
+                filterData.putString("date", formatDate(mDate));
+                filterData.putString("sort", mSpinner);
+                filterData.putBoolean("art", mArtChecked);
+                filterData.putBoolean("fashion", mFashionChecked);
+                filterData.putBoolean("sport", mSportChecked);
+                dialog.setArguments(filterData);
+            }
             dialog.show(manager, "Filtered");
             return true;
         }
@@ -145,7 +165,6 @@ public class SearchActivity extends AppCompatActivity implements FilterDialog.Fi
 
     @Override
     public void onFinishEditDialog(Date date, String spinner, Boolean art, Boolean fashion, Boolean sport) {
-        Toast.makeText(this, "Hi, " + date+ " " +spinner+ " " +art+ " " +fashion+ " " +sport, Toast.LENGTH_SHORT).show();
         mDate = date;
         mSpinner = spinner;
         mArtChecked = art;
@@ -157,7 +176,6 @@ public class SearchActivity extends AppCompatActivity implements FilterDialog.Fi
     public void loadNextDataFromApi(int offset) {
         Log.d("loadNextDataFromApi:" ," OFFSET = "+ offset);
         callNYTimes(query, offset);
-        // adapter.addAll(articles);
         adapter.notifyDataSetChanged();
     }
 
@@ -203,9 +221,10 @@ public class SearchActivity extends AppCompatActivity implements FilterDialog.Fi
                 try{
                     articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
                     Log.d("callNYTimes:", articleJsonResults.toString());
-                    adapter.addAll(Article.fromJSONArray(articleJsonResults));
+                    articles.addAll(Article.fromJSONArray(articleJsonResults));
                     // making changes directly to adapter modifies the underline data and add it to array list
-                    Log.d("callNYTimes:", "Number of articles recieved = " + articles);
+                    adapter.notifyDataSetChanged();
+                    Log.d("callNYTimes:", "Number of articles recieved = " + articles.size());
                     hitCount = response.getJSONObject("response").getJSONObject("meta").getInt("hits");
                     Log.d("Hit Count:", ""+hitCount);
                 }

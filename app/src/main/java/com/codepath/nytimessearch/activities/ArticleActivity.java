@@ -1,18 +1,15 @@
 package com.codepath.nytimessearch.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.codepath.nytimessearch.R;
 import com.codepath.nytimessearch.model.Article;
+
+import org.parceler.Parcels;
 
 public class ArticleActivity extends AppCompatActivity {
 
@@ -26,7 +23,7 @@ public class ArticleActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         //extract the url
-        Article article = (Article) getIntent().getSerializableExtra("article");
+        Article article = Parcels.unwrap(getIntent().getParcelableExtra("article"));
 
         wvArticle = (WebView) findViewById(R.id.wvArticle);
         wvArticle.setWebViewClient(new WebViewClient(){
@@ -40,7 +37,7 @@ public class ArticleActivity extends AppCompatActivity {
         wvArticle.loadUrl(article.getWebUrl());
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_search, menu);
@@ -69,6 +66,6 @@ public class ArticleActivity extends AppCompatActivity {
             return true;
         }
         return true;
-    }
+    }*/
 
 }

@@ -5,4 +5,11 @@
     <string name="search">Search</string>
     <string name="title_activity_article">ArticleActivity</string>
     <string name="title_activity_filter">FilterActivity</string>
+    <string name="begin_date">Begin Date</string>
+    <string name="sort">Sort Order</string>
+    <string name="news_desk">News Desk Values</string>
+    <string name="artCheckBox">Arts</string>
+    <string name="fashionCheckBox">Fashion and Style</string>
+    <string name="sportCheckBox">Sports</string>
+    <string name="saveBtn">Save</string>
 </resources>

@@ -11,17 +11,8 @@
         app:actionViewClass="android.support.v7.widget.SearchView" />
 
     <item
-        android:id="@+id/menu_item_share"
-        android:orderInCategory="200"
-        android:title="Share"
-        android:icon="@drawable/share_icon"
-        app:showAsAction="ifRoom|collapseActionView"
-        android:actionProviderClass=
-            "android.widget.ShareActionProvider" />
-
-    <item
         android:id="@+id/action_settings"
-        android:orderInCategory="300"
+        android:orderInCategory="200"
         android:title="@string/action_settings"
         android:icon="@drawable/filter_icon"
         app:showAsAction="ifRoom|collapseActionView" />

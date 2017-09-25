@@ -12,22 +12,25 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:id="@+id/linearLayout">
 
         <TextView
             android:id="@+id/tvBeginDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
-            android:text="Begin Date"
+            android:text="@string/begin_date"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_weight="0.04" />
+            android:layout_weight="0.04"
+            android:textColor="@color/colorAccent"/>
 
         <TextView
             android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
+            android:textStyle="bold"
             android:layout_alignBottom="@+id/tvBeginDate" />
 
         <TextView
@@ -35,28 +38,32 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/tvDate"
-            android:layout_marginTop="80dp"
-            android:text="Sort Order"
+            android:layout_marginTop="50dp"
+            android:text="@string/sort"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="25sp" />
+            android:textSize="25sp"
+            android:textColor="@color/colorAccent"/>
 
         <Spinner
             android:id="@+id/spSortOrder"
-            android:layout_width="50dp"
-            android:layout_height="20dp"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
             android:entries="@array/sortBy_array"
             android:textSize="25sp"
             android:layout_marginTop="15dp"
-            android:layout_alignBottom="@+id/tvSortOrder"/>
+            android:textAlignment="center"
+            android:layout_alignBottom="@+id/tvSortOrder"
+            android:background="@android:color/white"/>
 
         <TextView
             android:id="@+id/tvNewsDeskValues"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="News Desk Values"
+            android:text="@string/news_desk"
             android:textSize="25sp"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="50dp"
             android:layout_alignBottom="@+id/tvDate"
+            android:textColor="@color/colorAccent"
             android:textAppearance="?android:attr/textAppearanceLarge"/>
 
         <CheckBox
@@ -64,33 +71,38 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
+            android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
-            android:text="Arts" />
+            android:text="@string/artCheckBox" />
 
         <CheckBox
             android:id="@+id/cbFashion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
+            android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
-            android:text="Fashion and Style" />
+            android:text="@string/fashionCheckBox" />
 
         <CheckBox
             android:id="@+id/cbSport"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:layout_gravity="left"
-            android:text="Sports"/>
+            android:text="@string/sportCheckBox"/>
     </LinearLayout>
 
     <Button
         android:id="@+id/btnSave"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="save"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="21dp" />
+        android:text="@string/saveBtn"
+        android:background="@color/colorAccent"
+        android:layout_below="@+id/linearLayout"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
